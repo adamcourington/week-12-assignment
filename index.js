@@ -1,9 +1,10 @@
 // Users
 class User {
-  constructor(firstName, lastName, title) {
+  constructor(firstName, lastName, title, hireDate) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.title = title;
+    this.hireDate = hireDate;
   }
 }
 
@@ -22,8 +23,8 @@ class UserService {
     return $.post(this.url, user);
   }
 
-  static updateUser(id, firstName, lastName, title) {
-    const data = { firstName, lastName, title };
+  static updateUser(id, firstName, lastName, title, hireDate) {
+    const data = { firstName, lastName, title, hireDate };
     console.log('User from update User', data);
     return $.ajax({
       url: `${this.url}/${id}`,
@@ -49,14 +50,14 @@ class DOMManager {
     UserService.getAllUsers().then((users) => this.render(users));
   }
 
-  static createUser(firstName, lastName, title) {
-    UserService.createUser(new User(firstName, lastName, title))
+  static createUser(firstName, lastName, title, hireDate) {
+    UserService.createUser(new User(firstName, lastName, title, hireDate))
       .then(() => UserService.getAllUsers())
       .then((users) => this.render(users));
   }
 
-  static updateUser(id, firstName, lastName, title) {
-    UserService.updateUser(id, firstName, lastName, title)
+  static updateUser(id, firstName, lastName, title, hireDate) {
+    UserService.updateUser(id, firstName, lastName, title, hireDate)
       .then(() => UserService.getAllUsers())
       .then((users) => this.render(users));
   }
@@ -107,9 +108,29 @@ class DOMManager {
             <div class="col-sm">
               <input
                 type="text"
+                id="${user.id}-update-user-last-name"
+                class="form-control"
+                placeholder="Last Name"
+                required
+              />
+            </div>
+            </div>
+            <div class="row">
+            <div class="col-sm">
+              <input
+                type="text"
                 id="${user.id}-update-user-title"
                 class="form-control"
                 placeholder="Title"
+                required
+              />
+            </div>
+            <div class="col-sm">
+              <input
+                type="date"
+                id="${user.id}-update-user-hire-date"
+                class="form-control"
+                placeholder="Hire Date"
                 required
               />
             </div>
@@ -137,11 +158,13 @@ $('#add-new-user').click(() => {
   DOMManager.createUser(
     $('#new-user-first-name').val(),
     $('#new-user-last-name').val(),
-    $('#new-user-title').val()
+    $('#new-user-title').val(),
+    $('#new-user-hire-date').val()
   );
   $('#new-user-first-name').val('');
   $('#new-user-last-name').val('');
   $('#new-user-title').val('');
+  $('#new-user-hire-date').val('');
 });
 
 //update user
@@ -149,13 +172,15 @@ function updateUser(id) {
   const firstName = $(`#${id}-update-user-first-name`).val();
   const lastName = $(`#${id}-update-user-last-name`).val();
   const title = $(`#${id}-update-user-title`).val();
+  const hireDate = $(`#${id}-update-user-hire-date`).val();
+
   // console.log({
   //   id,
   //   name,
   //   title,
   // });
 
-  DOMManager.updateUser(id, firstName, lastName, title);
+  DOMManager.updateUser(id, firstName, lastName, title, hireDate);
 }
 
 //get all users on first render
